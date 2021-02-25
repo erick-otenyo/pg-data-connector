@@ -4,10 +4,12 @@ from pgadapter.config import SETTINGS
 
 PG_SERVICE_SCHEMA = SETTINGS.get("PG_SERVICE_SCHEMA")
 TILESERV_ROLE_PASSWORD = SETTINGS.get("TILESERV_ROLE_PASSWORD")
+import logging
 
 
 @click.command(name="setup_db")
 def setup_db():
+    logging.info("[DBSETUP]: Setting up db")
     sql = f"""DO
             $do$
             BEGIN
@@ -25,3 +27,5 @@ def setup_db():
     db.session.execute(sql)
 
     db.session.commit()
+
+    logging.info("[DBSETUP]: Done Setting up db")

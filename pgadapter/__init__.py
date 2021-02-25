@@ -72,10 +72,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # pagination
 app.config['ITEMS_PER_PAGE'] = SETTINGS.get('ITEMS_PER_PAGE', 20)
 
-# TODO: Run this only once
-# Setup Db
-db_setup.setup()
-
 # Database
 db = SQLAlchemy(app)
 
