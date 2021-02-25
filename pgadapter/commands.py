@@ -13,6 +13,7 @@ def setup_db():
     sql = f"""DO
             $do$
             BEGIN
+                CREATE EXTENSION IF NOT EXISTS postgis;
                 CREATE SCHEMA IF NOT EXISTS {PG_SERVICE_SCHEMA};
                IF NOT EXISTS (
                   SELECT FROM pg_catalog.pg_roles
