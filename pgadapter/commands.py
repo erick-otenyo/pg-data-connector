@@ -20,7 +20,7 @@ def setup_db():
                   WHERE  rolname = 'tileserv') THEN
                   CREATE ROLE tileserv LOGIN ENCRYPTED PASSWORD '{TILESERV_ROLE_PASSWORD}';
                   GRANT USAGE ON SCHEMA {PG_SERVICE_SCHEMA} TO tileserv;
-                  GRANT SELECT ON ALL TABLES IN SCHEMA {PG_SERVICE_SCHEMA} TO tileserv;
+                  ALTER DEFAULT PRIVILEGES IN SCHEMA {PG_SERVICE_SCHEMA} GRANT SELECT ON TABLES TO tileserv;
                END IF;
             END
             $do$;"""
