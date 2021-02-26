@@ -15,6 +15,7 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from rollbar.logger import RollbarHandler
+from healthcheck import HealthCheck
 
 from pgadapter.config import SETTINGS
 
@@ -76,6 +77,18 @@ app.config['ITEMS_PER_PAGE'] = SETTINGS.get('ITEMS_PER_PAGE', 20)
 db = SQLAlchemy(app)
 
 migrate = Migrate(app, db)
+
+# wrap flask app and give a healthcheck url
+
+health = HealthCheck(app, "/healthcheck")
+
+
+def db_available():
+    db.session.execute('SELECT 1')
+    return True, "dbworks"
+
+
+health.add_check(db_available)
 
 # DB has to be ready!
 from pgadapter.routes.api.v1 import endpoints, error
