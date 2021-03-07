@@ -47,7 +47,7 @@ def shp2pgsql(shp_zip_path, table_name, srid=4326):
         logging.info("[SHP2PGSQL]: Running shp2pgsql command")
 
         # Turns the shp file into an sql query
-        cmd = ['shp2pgsql', '-I', '-s', f"{srid}", shp[0], full_table_name]
+        cmd = ['shp2pgsql', '-c', '-D', '-I', '-s', f"{srid}", shp[0], full_table_name]
 
         p1 = Popen(cmd, stdout=PIPE, stderr=PIPE)
 
