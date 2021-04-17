@@ -51,7 +51,7 @@ def shp2pgsql(shp_zip_path, table_name, srid=4326):
 
         p1 = Popen(cmd, stdout=PIPE, stderr=PIPE)
 
-        db_uri = SETTINGS.get("SQLALCHEMY_DATABASE_URI")
+        db_uri = SETTINGS.get("DATABASE_URI")
 
         # Runs the temporary sql file, using a connection
         psql_cmd = ['psql', db_uri, ]
