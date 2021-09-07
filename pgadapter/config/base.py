@@ -7,7 +7,7 @@ SETTINGS = {
     'service': {
         'port': os.getenv('PORT')
     },
-    'DATABASE_URI': os.getenv('DATABASE_URI'),
+    'SQLALCHEMY_DATABASE_URI': os.getenv('SQLALCHEMY_DATABASE_URI'),
     'ITEMS_PER_PAGE': int(os.getenv('ITEMS_PER_PAGE', 20)),
     'UPLOAD_FOLDER': '/tmp/datasets',
     'ROLLBAR_SERVER_TOKEN': os.getenv('ROLLBAR_SERVER_TOKEN'),

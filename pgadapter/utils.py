@@ -89,6 +89,7 @@ def ogr2pg(file_path, table_name, srid=4326):
     db_port = dbc.port or 5432
     db_user = dbc.username
     db_password = dbc.password
+    # unquote password incase it is encoded
     db_password = unquote(db_password)
     db_name = dbc.path.lstrip(' / ')
 
