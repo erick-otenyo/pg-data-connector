@@ -117,6 +117,7 @@ def ogr2pg(file_path, table_name, srid=4326):
 def db_import(file_path, table_name):
     file_extension = os.path.splitext(file_path)[1]
 
+    # handle shapefile
     if file_extension == ".zip":
         logging.info("[DB_IMPORT]: Importing Shapefile")
 
@@ -152,7 +153,7 @@ def db_import(file_path, table_name):
 
             return table
 
-        # handle shapefile
+    # handle geojson
     if file_extension == ".geojson":
         logging.info("[DB_IMPORT]: Importing Geojson")
         table = ogr2pg(file_path, table_name)
