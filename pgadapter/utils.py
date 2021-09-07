@@ -7,7 +7,7 @@ from zipfile import ZipFile
 
 from pgadapter.config import SETTINGS
 from pgadapter.errors import NoShpFound, NoShxFound, NoDbfFound
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 
 PG_SERVICE_SCHEMA = SETTINGS.get('PG_SERVICE_SCHEMA')
 
@@ -89,6 +89,8 @@ def ogr2pg(file_path, table_name, srid=4326):
     db_port = dbc.port or 5432
     db_user = dbc.username
     db_password = dbc.password
+    # unquote incase encoded
+    db_password = unquote(db_password)
     db_name = dbc.path.lstrip(' / ')
 
     # construct ogr2ogr command
