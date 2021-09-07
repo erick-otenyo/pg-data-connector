@@ -9,7 +9,7 @@ from pgadapter import db, app
 from pgadapter.config import SETTINGS
 from pgadapter.errors import InvalidFile, PGDatasetDuplicated, PGDatasetNotFound
 from pgadapter.models import PGDataset
-from pgadapter.utils import shp2pgsql
+from pgadapter.utils import db_import
 
 PG_SERVICE_SCHEMA = SETTINGS.get('PG_SERVICE_SCHEMA')
 
@@ -52,7 +52,8 @@ class PGDatasetService(object):
         else:
             raise InvalidFile(message='Invalid File')
 
-        table = shp2pgsql(sent_file_path, form_data["table_name"])
+        logging.info("Importing to database")
+        table = db_import(sent_file_path, form_data["table_name"])
 
         pg_dataset = PGDataset(**table)
 
@@ -62,6 +63,9 @@ class PGDatasetService(object):
             db.session.commit()
         except Exception as e:
             raise e
+        finally:
+            # delete the uploaded file
+            os.remove(sent_file_path)
         return pg_dataset
 
     @staticmethod

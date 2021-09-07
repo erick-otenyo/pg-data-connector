@@ -7,11 +7,12 @@ if [ "$DB" = "postgres" ]; then
   done
 
   echo "PostgreSQL started"
+
+  # setup database
+  flask setup_db
+
+  # Migrate db
+  flask db upgrade
+
+  exec "$@"
 fi
-# setup database
-flask setup_db
-
-# Migrate db
-flask db upgrade
-
-exec "$@"

@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.8.1
+FROM python:3.8.2-slim-buster
 
 # set work directory
 WORKDIR /usr/src/app
@@ -10,23 +10,81 @@ ENV PYTHONUNBUFFERED 1
 
 RUN apt-get update && apt-get -y install netcat lsb-release
 
+ARG GDAL_VERSION=3.2.2
+ARG SOURCE_DIR=/usr/local/src/python-gdal
 
-RUN apt-get update \
- && DEBIAN_FRONTEND=noninteractive apt-get install -y wget gnupg \
- && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
- && echo "deb http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" >> tee  /etc/apt/sources.list.d/pgdg.list
-
-ENV PG_VERSION=11 
-
-RUN apt-get update \
- && DEBIAN_FRONTEND=noninteractive apt-get install -y acl sudo locales \
-      postgresql-${PG_VERSION} postgresql-client-${PG_VERSION} postgresql-contrib-${PG_VERSION} postgis postgresql-${PG_VERSION}-postgis-2.5
+RUN \
+# Install runtime dependencies
+    apt-get update \
+    && apt-get install -y --no-install-recommends \
+        build-essential \
+        wget \
+        automake libtool pkg-config libsqlite3-dev sqlite3 \
+        libpq-dev \
+        libcurl4-gnutls-dev \
+        libproj-dev \
+        libxml2-dev \
+        libgeos-dev \
+        libnetcdf-dev \
+        libpoppler-dev \
+        libspatialite-dev \
+        libhdf4-alt-dev \
+        libhdf5-serial-dev \
+        libopenjp2-7-dev \
+    && rm -rf /var/lib/apt/lists/* \
+    \
+# Install numpy
+    && pip install numpy \
+# Build against PROJ master (which will be released as PROJ 6.0)
+    && wget "http://download.osgeo.org/proj/proj-6.0.0.tar.gz" \
+    && tar -xzf "proj-6.0.0.tar.gz" \
+    && mv proj-6.0.0 proj \
+    && echo "#!/bin/sh" > proj/autogen.sh \
+    && chmod +x proj/autogen.sh \
+    && cd proj \
+    && ./autogen.sh \
+    && CXXFLAGS='-DPROJ_RENAME_SYMBOLS' CFLAGS='-DPROJ_RENAME_SYMBOLS' ./configure --disable-static --prefix=/usr/local \
+    && make -j"$(nproc)" \
+    && make -j"$(nproc)" install \
+    # Rename the library to libinternalproj
+    && mv /usr/local/lib/libproj.so.15.0.0 /usr/local/lib/libinternalproj.so.15.0.0 \
+    && rm /usr/local/lib/libproj.so* \
+    && rm /usr/local/lib/libproj.la \
+    && ln -s libinternalproj.so.15.0.0 /usr/local/lib/libinternalproj.so.15 \
+    && ln -s libinternalproj.so.15.0.0 /usr/local/lib/libinternalproj.so \
+    \
+# Get latest GDAL source
+    && mkdir -p "${SOURCE_DIR}" \
+    && cd "${SOURCE_DIR}" \
+    && wget "http://download.osgeo.org/gdal/${GDAL_VERSION}/gdal-${GDAL_VERSION}.tar.gz" \
+    && tar -xvf "gdal-${GDAL_VERSION}.tar.gz" \
+    \
+# Compile and install GDAL
+    && cd "gdal-${GDAL_VERSION}" \
+    && export LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH \
+    && ./configure \
+            --with-python \
+            --with-curl \
+            --with-openjpeg \
+            --without-libtool \
+            --with-proj=/usr/local \
+    && make -j"$(nproc)" \
+    && make install \
+    && ldconfig \
+    \
+    && cd /usr/local \
+    \
+# Clean up
+    && apt-get update -y \
+    && apt-get remove -y --purge build-essential wget \
+    && apt-get autoremove -y \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm -rf "${SOURCE_DIR}"
 
 # install dependencies
 RUN pip install --upgrade pip
 COPY ./requirements.txt /usr/src/app/requirements.txt
 RUN pip install -r requirements.txt
-
 
 # copy project
 COPY . /usr/src/app/
