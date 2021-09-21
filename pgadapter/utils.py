@@ -97,7 +97,9 @@ def ogr2pg(file_path, table_name, srid=4326):
     # notable option: -lco FID=gid  - Use custom fid column name. ogr by default gives ogc_fid. We use gid instead
     cmd = ["ogr2ogr", "-f", "PostgreSQL",
            f"PG:host={db_host} port={db_port} user={db_user} password={db_password} dbname={db_name}", file_path,
-           "-nln", table_name, "-lco", f"FID=gid", "-lco", f"SCHEMA={PG_SERVICE_SCHEMA}", "-lco", "GEOMETRY_NAME=geom"]
+           "-nln", table_name, "-lco", f"FID=gid", "-lco", f"SCHEMA={PG_SERVICE_SCHEMA}", "-lco", "GEOMETRY_NAME=geom",
+           "-nlt", "PROMOTE_TO_MULTI"
+           ]
 
     p1 = Popen(cmd, stdout=PIPE, stderr=PIPE)
 

@@ -32,3 +32,7 @@ def setup_db():
     db.session.commit()
 
     logging.info("[DBSETUP]: Done Setting up db")
+
+    # NOTE:
+    # https://stackoverflow.com/questions/22684255/grant-privileges-on-future-tables-in-postgresql
+    # ALTER DEFAULT PRIVILEGES FOR USER pgadapteruser IN SCHEMA pgadapter GRANT SELECT ON TABLES TO tileserv;
