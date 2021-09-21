@@ -98,7 +98,7 @@ def ogr2pg(file_path, table_name, srid=4326):
     cmd = ["ogr2ogr", "-f", "PostgreSQL",
            f"PG:host={db_host} port={db_port} user={db_user} password={db_password} dbname={db_name}", file_path,
            "-nln", table_name, "-lco", f"FID=gid", "-lco", f"SCHEMA={PG_SERVICE_SCHEMA}", "-lco", "GEOMETRY_NAME=geom",
-           "-nlt", "PROMOTE_TO_MULTI"
+           "-nlt", "PROMOTE_TO_MULTI", "-lco", "PRECISION=NO"
            ]
 
     p1 = Popen(cmd, stdout=PIPE, stderr=PIPE)
