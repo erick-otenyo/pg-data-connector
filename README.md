@@ -156,10 +156,10 @@ The endpoints for importing and deleting data require basic authentication i.e. 
 
 ## Production Deployment
 
-This service was developed to be part of the ICPAC's `PostGIS for The Web Services`
+This service was developed as part of the ICPAC's `PostGIS for the Web Services`
 used in various applications, including the [EAHW](https://eahazardswatch.icpac.net).
 
-This means that ideally it should be deployed alongside the other services that depend on the imported data.
+This means that ideally, it should be deployed alongside the other services that depend on the imported data.
 
 You can find an [example project here](https://github.com/icpac-igad/eahw-pg4w) that runs the EAHW PostGIS for the Web
 collection.
