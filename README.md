@@ -9,6 +9,8 @@ These tables can then be exposed on the web as `vector tiles`
 or `geojson` using tools like [pg_tileserv](https://github.com/CrunchyData/pg_tileserv)
 and [pg_featureserv](https://github.com/CrunchyData/pg_featureserv).
 
+Under the hood, this service uses [ogr2ogr](https://gdal.org/programs/ogr2ogr.html)
+
 ## Dependencies
 
 The PG Data Connector service is built using [Flask](https://github.com/pallets/flask), and can be executed either
@@ -93,14 +95,15 @@ docker run --rm --env-file .env -p 8000:8000 pg_data_container gunicorn --bind 0
 - FLASK_ENV=dev or production
 - FLASK_APP=pgadapter/__init__.py
 
-- SQLALCHEMY_DATABASE_URI => Postgres connection string in the usual form: `postgresql://<username>:<password>@<host>:<port>/<db>`
+- SQLALCHEMY_DATABASE_URI => Postgres connection string in the usual
+  form: `postgresql://<username>:<password>@<host>:<port>/<db>`
 - PG_SERVICE_SCHEMA => DB schema to use
 - PG_SERVICE_USER => DB role name
 - PG_SERVICE_USER_PASSWORD => DB role password
 
-**NOTE:** The `PG_SERVICE_SCHEMA`, `PG_SERVICE_USER` and `PG_SERVICE_USER_PASSWORD` will be used to create a schema 
-that will be accessed securely by external apps without compromising the database security. This will be created in 
-the db automatically using the `flask setu_db` command. You do not need to create them manually in your database.
+**NOTE:** The `PG_SERVICE_SCHEMA`, `PG_SERVICE_USER` and `PG_SERVICE_USER_PASSWORD` will be used to create a schema that
+will be accessed securely by external apps without compromising the database security. This will be created in the db
+automatically using the `flask setu_db` command. You do not need to create them manually in your database.
 
 - API_USERNAME => API username for basic auth of the endpoints
 - API_PASSWORD_HASH =>  Password Hash for authentication. You can generate one using the script below:
@@ -109,8 +112,8 @@ the db automatically using the `flask setu_db` command. You do not need to creat
    
    generate_password_hash("<yourpassword>")
    ```
-  
-   If you forget your password, just create a new hash using your new password, and restart the service.
+
+  If you forget your password, just create a new hash using your new password, and restart the service.
 
 ## Usage
 
@@ -122,13 +125,14 @@ The service exposes 3 endpoints:
   POST api/v1/pg-dataset
 ```
 
-#### Parameters 
+#### Parameters
 
 | Name         | Type     | Description                                                                                    |
 |:-------------|:---------|:-----------------------------------------------------------------------------------------------|
-| `file`       | `File`   | **Required**. The file to import. This must be either a `zipped shapefile` or a `geojson` file |
-| `table_name` | `string` | **Required**. The name to save the table as in the database                                    |
-
+| `file`       | `File`   | **
+Required**. The file to import. This must be either a `zipped shapefile` or a `geojson` file |
+| `table_name` | `string` | **
+Required**. The name to save the table as in the database                                    |
 
 ### Listing available Datasets
 
@@ -146,19 +150,19 @@ The service exposes 3 endpoints:
 |:-------------|:---------|:----------------------------------------------|
 | `dataset_id` | `string` | **Required**. The ID of the dataset to delete |
 
-
 ### Authentication
 
 The endpoints for importing and deleting data require basic authentication i.e. `username` and `password`
 
-
 ## Production Deployment
+
 This service was developed to be part of the ICPAC's `PostGIS for The Web Services`
 used in various applications, including the [EAHW](https://eahazardswatch.icpac.net).
 
 This means that ideally it should be deployed alongside the other services that depend on the imported data.
 
-You can find an [example project here](https://github.com/icpac-igad/eahw-pg4w) that runs the EAHW PostGIS for the Web collection.
+You can find an [example project here](https://github.com/icpac-igad/eahw-pg4w) that runs the EAHW PostGIS for the Web
+collection.
 
 
 
