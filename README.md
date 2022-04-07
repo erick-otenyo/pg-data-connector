@@ -121,7 +121,7 @@ The service exposes 3 endpoints:
 
 ### Import geospatial data
 
-```http request
+```
   POST api/v1/pg-dataset
 ```
 
@@ -134,13 +134,13 @@ The service exposes 3 endpoints:
 
 ### Listing available Datasets
 
-```http request
+```
   GET api/v1/pg-dataset
 ```
 
 ### Deleting Dataset
 
-```http request
+```
   DELETE api/v1/pg-dataset/${dataset_id}
 ```
 
