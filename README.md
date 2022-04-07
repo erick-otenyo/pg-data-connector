@@ -122,7 +122,7 @@ The service exposes 3 endpoints:
 ### Import geospatial data
 
 ```
-  POST api/v1/pg-dataset
+  POST /api/v1/pg-dataset
 ```
 
 #### Parameters
@@ -135,13 +135,13 @@ The service exposes 3 endpoints:
 ### Listing available Datasets
 
 ```
-  GET api/v1/pg-dataset
+  GET /api/v1/pg-dataset
 ```
 
 ### Deleting Dataset
 
 ```
-  DELETE api/v1/pg-dataset/${dataset_id}
+  DELETE /api/v1/pg-dataset/${dataset_id}
 ```
 
 | Name         | Type     | Description                                   |
