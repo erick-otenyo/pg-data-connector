@@ -127,10 +127,10 @@ The service exposes 3 endpoints:
 
 #### Parameters
 
-| Type     | Name         | Description                                                                                    |
-|:---------|:-------------|:-----------------------------------------------------------------------------------------------|
-| `File`   | `file`       | **Required**. The file to import. This must be either a `zipped shapefile` or a `geojson` file |
-| `string` | `table_name` | **Required**. The name to save the table as in the database                                    |
+| Name         | Type     | Description                                                                                    |
+|:-------------|:---------|:-----------------------------------------------------------------------------------------------|
+| `file`       | `File`   | **Required**. The file to import. This must be either a `zipped shapefile` or a `geojson` file |
+| `table_name` | `string` | **Required**. The name to save the table as in the database                                    |
 
 ### Listing available Datasets
 
