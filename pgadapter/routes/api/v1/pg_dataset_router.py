@@ -2,6 +2,7 @@ import logging
 
 from flask import jsonify, request
 
+from pgadapter import auth
 from pgadapter.errors import InvalidFile, PGDatasetDuplicated, PGDatasetNotFound
 from pgadapter.routes.api.v1 import endpoints, error
 from pgadapter.services import PGDatasetService
@@ -11,6 +12,7 @@ from pgadapter.validators import validate_file
 # PG Dataset  Routes
 @endpoints.route('/pg-dataset', strict_slashes=False, methods=['POST'])
 @validate_file
+@auth.login_required
 def create_pg_dataset():
     """Create pg dataset"""
     logging.info('[ROUTER]: Creating pg dataset')
@@ -60,6 +62,7 @@ def get_pg_datasets():
 
 
 @endpoints.route('/pg-dataset/<pg_dataset_id>', strict_slashes=False, methods=['DELETE'])
+@auth.login_required
 def delete_pg_dataset(pg_dataset_id):
     """Delete pg dataset"""
     logging.info(f"[ROUTER]: Deleting pg dataset: {pg_dataset_id} ")

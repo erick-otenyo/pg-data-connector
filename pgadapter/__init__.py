@@ -5,17 +5,16 @@ from __future__ import division
 from __future__ import print_function
 
 import logging
-import os
 import sys
 
-import rollbar
-import rollbar.contrib.flask
-from flask import Flask, got_request_exception
+import graypy
+from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
-from rollbar.logger import RollbarHandler
 from healthcheck import HealthCheck
+from flask_httpauth import HTTPBasicAuth
+from werkzeug.security import check_password_hash
 
 from pgadapter.config import SETTINGS
 
@@ -27,17 +26,19 @@ logging.basicConfig(
 
 # Flask App
 app = Flask(__name__, template_folder=SETTINGS.get("TEMPLATE_DIR"))
+auth = HTTPBasicAuth()
 CORS(app)
 
-# Ensure all unhandled exceptions are logged, and reported to rollbar
+# Ensure all unhandled exceptions are logged
 logger = logging.getLogger(__name__)
+logger.setLevel(SETTINGS.get('logging', {}).get('level'))
 handler = logging.StreamHandler(stream=sys.stdout)
 logger.addHandler(handler)
 
-rollbar.init(os.getenv('ROLLBAR_SERVER_TOKEN'), os.getenv('ENV'))
-rollbar_handler = RollbarHandler()
-rollbar_handler.setLevel(logging.ERROR)
-logger.addHandler(rollbar_handler)
+if SETTINGS.get("GRAYLOG_HOST") and SETTINGS.get("GRAYLOG_PORT"):
+    handler = graypy.GELFUDPHandler(SETTINGS.get("GRAYLOG_HOST"), int(SETTINGS.get("GRAYLOG_PORT")))
+    logger.addHandler(handler)
+    logging.debug("Hello Graylog")
 
 
 def handle_exception(exc_type, exc_value, exc_traceback):
@@ -48,23 +49,6 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 
 
 sys.excepthook = handle_exception
-
-
-@app.before_first_request
-def init_rollbar():
-    """init rollbar module"""
-    rollbar.init(
-        SETTINGS.get('ROLLBAR_SERVER_TOKEN'),
-        # environment name
-        os.getenv('ENV'),
-        # server root directory, makes tracebacks prettier
-        root=os.path.dirname(os.path.realpath(__file__)),
-        # flask already sets up logging
-        allow_logging_basic_config=False)
-
-    # send exceptions from `app` to rollbar, using flask's signal system.
-    got_request_exception.connect(rollbar.contrib.flask.report_exception, app)
-
 
 # Config
 app.config['SQLALCHEMY_DATABASE_URI'] = SETTINGS.get('SQLALCHEMY_DATABASE_URI')
@@ -92,6 +76,20 @@ health.add_check(db_available)
 
 # DB has to be ready!
 from pgadapter.routes.api.v1 import endpoints, error
+
+
+@auth.verify_password
+def verify_password(username, password):
+    if SETTINGS.get("API_USERNAME") and SETTINGS.get("API_PASSWORD_HASH") and SETTINGS.get("API_USERNAME") == username \
+            and check_password_hash(SETTINGS.get("API_PASSWORD_HASH"), password):
+        return True
+    return False
+
+
+@auth.error_handler
+def auth_error(status):
+    return jsonify(message="Unauthorized"), status
+
 
 # Blueprint Flask Routing
 app.register_blueprint(endpoints, url_prefix='/api/v1')

@@ -2,11 +2,11 @@ import click
 from pgadapter import db
 from pgadapter.config import SETTINGS
 
+import logging
+
 PG_SERVICE_SCHEMA = SETTINGS.get("PG_SERVICE_SCHEMA")
 PG_SERVICE_USER = SETTINGS.get("PG_SERVICE_USER")
 PG_SERVICE_USER_PASSWORD = SETTINGS.get("PG_SERVICE_USER_PASSWORD")
-
-import logging
 
 
 @click.command(name="setup_db")

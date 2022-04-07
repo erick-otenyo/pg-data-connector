@@ -1,8 +1,11 @@
+import logging
 import os
+
+log_level = logging.getLevelName(os.getenv('LOG', "INFO"))
 
 SETTINGS = {
     'logging': {
-        'level': os.getenv('LOG')
+        'level': log_level
     },
     'service': {
         'port': os.getenv('PORT')
@@ -15,4 +18,8 @@ SETTINGS = {
     'PG_SERVICE_SCHEMA': os.getenv('PG_SERVICE_SCHEMA', "pgadapter"),
     'PG_SERVICE_USER': os.getenv('PG_SERVICE_USER'),
     'PG_SERVICE_USER_PASSWORD': os.getenv('PG_SERVICE_USER_PASSWORD'),
+    'GRAYLOG_HOST': os.getenv('GRAYLOG_HOST'),
+    'GRAYLOG_PORT': os.getenv('GRAYLOG_PORT'),
+    'API_USERNAME': os.getenv('API_USERNAME'),
+    'API_PASSWORD_HASH': os.getenv('API_PASSWORD_HASH'),
 }

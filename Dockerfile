@@ -1,4 +1,4 @@
-# pull official base image
+# pull base image
 FROM python:3.8.2-slim-buster
 
 # set work directory
@@ -8,16 +8,14 @@ WORKDIR /usr/src/app
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-RUN apt-get update && apt-get -y install netcat lsb-release
-
 ARG GDAL_VERSION=3.2.2
 ARG SOURCE_DIR=/usr/local/src/python-gdal
 
-RUN \
-# Install runtime dependencies
-    apt-get update \
+# Install  dependencies
+RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         build-essential \
+        lsb-release \
         wget \
         automake libtool pkg-config libsqlite3-dev sqlite3 \
         libpq-dev \
