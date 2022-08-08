@@ -37,7 +37,7 @@ class PGDatasetService(object):
             raise PGDatasetDuplicated(message=f"Dataset with existing table name {table_name} already exists")
 
         if sent_file and allowed_file(sent_file.filename):
-            logging.info('[SERVICE]: Allowed format')
+            logging.debug('[SERVICE]: Allowed format')
             filename = secure_filename(sent_file.filename)
             sent_file_path = os.path.join(SETTINGS.get('UPLOAD_FOLDER'), filename)
             logging.info('[SERVICE]: Saving file')

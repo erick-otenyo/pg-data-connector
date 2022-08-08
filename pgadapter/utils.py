@@ -6,7 +6,7 @@ from subprocess import Popen, PIPE
 from zipfile import ZipFile
 
 from pgadapter.config import SETTINGS
-from pgadapter.errors import NoShpFound, NoShxFound, NoDbfFound
+from pgadapter.errors import NoShpFound, NoShxFound, NoDbfFound, InvalidFile
 from urllib.parse import urlparse, unquote
 
 PG_SERVICE_SCHEMA = SETTINGS.get('PG_SERVICE_SCHEMA')
@@ -162,3 +162,11 @@ def db_import(file_path, table_name):
         logging.info("[DB_IMPORT]: Importing Geojson")
         table = ogr2pg(file_path, table_name)
         return table
+
+    # handle geopackage
+    if file_extension == ".gpkg":
+        logging.info("[DB_IMPORT]: Importing Geopackage")
+        table = ogr2pg(file_path, table_name)
+        return table
+
+    raise InvalidFile(message='Unsupported file type')
